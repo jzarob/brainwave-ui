@@ -10,7 +10,7 @@ export class PlotService {
   private weight: any;
 
   constructor() { 
-    this.socket = io('https://localhost:5000');
+    this.socket = io('http://localhost:5000');
     this.weight = 0.15;
     this.stats = {
       alpha: {

@@ -3,11 +3,15 @@ import { NgModule } from '@angular/core';
 
 
 import { AppComponent } from './app.component';
+import { WaveformComponent } from './waveform/waveform.component';
+import { PlotComponent } from './plot/plot.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    WaveformComponent,
+    PlotComponent
   ],
   imports: [
     BrowserModule

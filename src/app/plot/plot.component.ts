@@ -6,10 +6,14 @@ import {Config, Data, Layout} from 'plotly.js';
 @Component({
   selector: 'app-plot',
   templateUrl: './plot.component.html',
-  styleUrls: ['./plot.component.css']
+  styleUrls: ['./plot.component.css'],
+  providers: [PlotService]
 })
 export class PlotComponent implements OnInit {
   @ViewChild('plot') el: ElementRef;
+  private data: any;
+  private layout: any;
+  private element: any;
 
   constructor(private plotService: PlotService) { }
 
@@ -17,21 +21,32 @@ export class PlotComponent implements OnInit {
     this.configurePlot();
     this.plotService.onNewMessage().subscribe(msg => {
       console.log(msg);
+      this.data = msg;
+      Plotly.plot(this.element, [this.data], this.layout);
     });
   }
 
   configurePlot() {
-    const element = this.el.nativeElement;
+    this.element = this.el.nativeElement;
 
-    const data = [{
+    this.data = {
       x: [1, 2, 3, 4, 5],
       y: [1, 2, 4, 6, 10]
-    }]
+    }
   
-    const style = {
-      margin: {t: 0}
+    this.layout = {
+      title: 'Mood Chart',
+      margin: {
+        t: 50
+      },
+      xaxis: {
+        range: [-1.0, 1.0]
+      },
+      yaxis: {
+        range: [-1.0, 1.0]
+      }
     }
 
-    Plotly.plot(element, data, style);
+    Plotly.plot(this.element, [this.data], this.layout);
   }
 }

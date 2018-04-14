@@ -30,10 +30,20 @@ export class PlotComponent implements OnInit {
     this.element = this.el.nativeElement;
 
     this.data = {
-      x: [1, 2, 3, 4, 5],
-      y: [1, 2, 4, 6, 10]
-    }
-  
+      alpha: {
+          "max": 0.4176603081056414,
+          "min": 0.016835995035434276,
+          "mean": 0.1966480039590039,
+          "variance": 0.004850732463785751
+      },
+      beta: {
+          "max": 0.9409940446576599,
+          "min": 0.054656648524500515,
+          "mean": 0.5056359355383458,
+          "variance": 0.03426381912385437
+      }
+    }; 
+
     this.layout = {
       title: 'Mood Chart',
       margin: {

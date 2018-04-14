@@ -25,6 +25,7 @@
     "plotly.js": "^1.35.2",
     "rxjs": "^5.5.6",
     "wavesurfer.js": "^2.0.5",
+    "socket.io": "^2.1.0",
     "zone.js": "^0.8.19"
   },
   "devDependencies": {

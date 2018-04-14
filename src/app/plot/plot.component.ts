@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { PlotService } from '../plot.service'
 import * as Plotly from 'plotly.js';
 import {Config, Data, Layout} from 'plotly.js';
 
@@ -10,10 +11,13 @@ import {Config, Data, Layout} from 'plotly.js';
 export class PlotComponent implements OnInit {
   @ViewChild('plot') el: ElementRef;
 
-  constructor() { }
+  constructor(private plotService: PlotService) { }
 
   ngOnInit() {
     this.configurePlot();
+    this.plotService.onNewMessage().subscribe(msg => {
+      console.log(msg);
+    });
   }
 
   configurePlot() {

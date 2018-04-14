@@ -14,12 +14,16 @@ export class PlotService {
     this.weight = 0.15;
     this.stats = {
       alpha: {
-        mean: 1,
-        variance: 4
+          "max": 0.4176603081056414,
+          "min": 0.016835995035434276,
+          "mean": 0.1966480039590039,
+          "variance": 0.004850732463785751
       },
       beta: {
-        mean: 1,
-        variance: 4
+          "max": 0.9409940446576599,
+          "min": 0.054656648524500515,
+          "mean": 0.5056359355383458,
+          "variance": 0.03426381912385437
       }
     }
     this.smoothPrevious = null;

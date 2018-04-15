@@ -1,29 +1,21 @@
 import { Component, OnInit, AfterViewInit, Output } from '@angular/core';
 import * as WaveSurfer from 'wavesurfer.js';
-import { EventEmitter } from 'events';
+import { WaveformService } from '../waveform.service';
 
 @Component({
   selector: 'app-waveform',
   templateUrl: './waveform.component.html',
-  styleUrls: ['./waveform.component.css']
+  styleUrls: ['./waveform.component.css'],
+  providers: [WaveformService]
 })
 export class WaveformComponent implements OnInit, AfterViewInit {
 
-  wavesurfer: any = null;
+  wavesurfer: any;
 
-  @Output()
-  timeChanged: EventEmitter = new EventEmitter();
 
-  @Output()
-  paused: EventEmitter = new EventEmitter();
+  constructor(private waveformService: WaveformService) { }
 
-  @Output()
-  play: EventEmitter = new EventEmitter();
-
-  constructor() { }
-
-  ngOnInit() {
-  }
+  ngOnInit() {  }
 
   ngAfterViewInit() {
     requestAnimationFrame(() => {
@@ -33,19 +25,8 @@ export class WaveformComponent implements OnInit, AfterViewInit {
         progressColor: 'white'
       });
 
-      this.wavesurfer.load('assets/black-parade.wav');
+      this.waveformService.wavesurfer = this.wavesurfer;
 
-      this.wavesurfer.on('seek', (progress) => {
-        this.timeChanged.emit(progress);
-      });
-
-      this.wavesurfer.on('play', () => {
-        this.play.emit(null);
-      });
-
-      this.wavesurfer.on('pause', () => {
-        this.paused.emit(null);
-        });
     });
   }
 

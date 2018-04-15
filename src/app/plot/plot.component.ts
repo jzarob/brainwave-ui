@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { PlotService } from '../plot.service'
+import { WaveformService } from '../waveform.service'
 import * as Plotly from 'plotly.js';
 import {Config, Data, Layout} from 'plotly.js';
 
@@ -7,7 +8,7 @@ import {Config, Data, Layout} from 'plotly.js';
   selector: 'app-plot',
   templateUrl: './plot.component.html',
   styleUrls: ['./plot.component.css'],
-  providers: [PlotService]
+  providers: [PlotService, WaveformService]
 })
 export class PlotComponent implements OnInit {
   @ViewChild('plot') el: ElementRef;
@@ -15,7 +16,7 @@ export class PlotComponent implements OnInit {
   private layout: any;
   private element: any;
 
-  constructor(private plotService: PlotService) { }
+  constructor(private plotService: PlotService, private waveformService: WaveformService) { }
 
   ngOnInit() {
     this.configurePlot();
@@ -25,6 +26,9 @@ export class PlotComponent implements OnInit {
       this.data.mode = 'markers';
       this.data.type = 'scatter';
       Plotly.react(this.element, [this.data], this.layout);
+    });
+    this.waveformService.getFinishObservable().subscribe((val) => {
+      this.stopRecording();
     });
   }
 
@@ -52,5 +56,13 @@ export class PlotComponent implements OnInit {
     }
 
     Plotly.plot(this.element, [this.data], this.layout);
+  }
+
+  startRecording() {
+    this.plotService.startRecording();
+  }
+
+  stopRecording() {
+    this.plotService.stopRecording();
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client';
 import { Observable } from 'rxjs/Observable';
+import { WaveformService  } from './waveform.service';
 
 @Injectable()
 export class PlotService {
@@ -8,10 +9,16 @@ export class PlotService {
   private stats: any;
   private smoothPrevious: any;
   private weight: any;
+  private isWaveformReadyObs: Observable<boolean>;
+  private time: number;
+  private measuredValues: any[];
+  private isRecording: boolean;
 
-  constructor() {
+  constructor(private waveformService: WaveformService) {
     this.socket = io('http://localhost:5000');
     this.weight = 0.15;
+    this.measuredValues = [];
+    this.time = 0;
     this.stats = {
       alpha: {
           'max': 0.4176603081056414,
@@ -27,6 +34,11 @@ export class PlotService {
       }
     };
     this.smoothPrevious = null;
+    this.waveformService.getReadyObservable().subscribe((val) => {
+      this.waveformService.onNewTime().subscribe((val) => {
+        this.time = val;
+      });
+    });
   }
 
   onNewMessage() {
@@ -35,6 +47,10 @@ export class PlotService {
         msg = JSON.parse(msg);
         msg = this.calculateRelative(msg);
         msg = this.smooth(msg);
+        msg.time = this.time;
+        if (this.isRecording)
+          this.measuredValues.push(msg);
+        console.log(this.measuredValues);
         observer.next(this.mapToGrid(msg));
       });
     });
@@ -80,6 +96,15 @@ export class PlotService {
       };
       return this.smoothPrevious;
     }
+  }
+
+  startRecording() {
+    this.measuredValues = [];
+    this.isRecording = true;
+  }
+
+  stopRecording() {
+    this.isRecording = false;
   }
 }
 

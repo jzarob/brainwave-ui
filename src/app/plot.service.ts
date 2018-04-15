@@ -11,13 +11,13 @@ export class PlotService {
   private weight: any;
   private isWaveformReadyObs: Observable<boolean>;
   private time: number;
-  private measuredValues: any[];
+  private measuredValues: { [time: number]: any; };
   private isRecording: boolean;
 
   constructor(private waveformService: WaveformService) {
     this.socket = io('http://localhost:5000');
     this.weight = 0.15;
-    this.measuredValues = [];
+    this.measuredValues = {};
     this.time = 0;
     this.stats = {
       alpha: {
@@ -51,7 +51,7 @@ export class PlotService {
         if (this.isRecording) {
           this.measuredValues[this.time] = msg;
         }
-        
+
         console.log(this.measuredValues);
         observer.next(this.mapToGrid(msg));
       });

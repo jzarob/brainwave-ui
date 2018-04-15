@@ -110,7 +110,7 @@ export class PlotService {
   }
 
   getMeasuredValues() {
-    return this.getMeasuredValues();
+    return this.measuredValues;
   }
 
   startRecording() {

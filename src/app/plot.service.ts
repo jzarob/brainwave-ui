@@ -48,8 +48,10 @@ export class PlotService {
         msg = this.calculateRelative(msg);
         msg = this.smooth(msg);
         msg.time = this.time;
-        if (this.isRecording)
-          this.measuredValues.push(msg);
+        if (this.isRecording) {
+          this.measuredValues[this.time] = msg;
+        }
+        
         console.log(this.measuredValues);
         observer.next(this.mapToGrid(msg));
       });

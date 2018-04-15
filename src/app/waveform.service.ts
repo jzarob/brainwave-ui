@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as WaveSurfer from 'wavesurfer.js';
 import { EventEmitter } from 'events';
 import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()
@@ -10,11 +11,11 @@ export class WaveformService {
   private timeChanged: EventEmitter = new EventEmitter();
   private paused: EventEmitter = new EventEmitter();
   private play: EventEmitter = new EventEmitter();
-  private readyObservable: Subject<boolean>;
+  private readyObservable: BehaviorSubject<boolean>;
   private finishedObs: Subject<boolean>;
 
   constructor() { 
-    this.readyObservable = new Subject();
+    this.readyObservable = new BehaviorSubject(false);
     this.finishedObs = new Subject();
   }
 
@@ -28,6 +29,7 @@ export class WaveformService {
 
     this._wavesurfer.on('ready', () => {
       this.readyObservable.next(true);
+      console.log('wavesurfer ready');
     });
 
     this._wavesurfer.on('seek', (progress) => {

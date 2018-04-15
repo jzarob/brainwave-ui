@@ -30,12 +30,4 @@ export class WaveformComponent implements OnInit, AfterViewInit {
     });
   }
 
-  togglePlay() {
-    if (this.wavesurfer.isPlaying()) {
-      this.wavesurfer.pause();
-    } else {
-      this.wavesurfer.play();
-    }
-  }
-
 }

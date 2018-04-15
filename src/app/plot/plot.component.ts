@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { PlotService } from '../plot.service'
 import { WaveformService } from '../waveform.service'
 import * as Plotly from 'plotly.js';
@@ -10,11 +10,14 @@ import {Config, Data, Layout} from 'plotly.js';
   styleUrls: ['./plot.component.css'],
   providers: [PlotService, WaveformService]
 })
-export class PlotComponent implements OnInit {
+export class PlotComponent implements OnInit, AfterViewInit {
   @ViewChild('plot') el: ElementRef;
   private data: any;
   private layout: any;
   private element: any;
+  private wavesurfer: any;
+  private wavesurferReady: boolean;
+  private readySubscription: any;
 
   constructor(private plotService: PlotService, private waveformService: WaveformService) { }
 
@@ -27,10 +30,26 @@ export class PlotComponent implements OnInit {
       this.data.type = 'scatter';
       Plotly.react(this.element, [this.data], this.layout);
     });
+  }
+
+  ngAfterViewInit(){
+    console.log('in after view');
     this.waveformService.getFinishObservable().subscribe((val) => {
       this.stopRecording();
     });
+    this.readySubscription = this.waveformService.getReadyObservable().subscribe((val) => {
+      this.wavesurferReady = val;
+      console.log('plot componenet wave surfer status', val);
+      if (val) {
+        this.wavesurfer = this.waveformService.wavesurfer;
+      }
+    });
   }
+
+  ngOnDestroy() {
+    this.readySubscription.unsubscribe();
+  }
+
 
   configurePlot() {
     this.element = this.el.nativeElement;
@@ -59,10 +78,30 @@ export class PlotComponent implements OnInit {
   }
 
   startRecording() {
+    if (!this.wavesurferReady)
+      return;
+    this.wavesurfer.play();
     this.plotService.startRecording();
   }
 
   stopRecording() {
     this.plotService.stopRecording();
+  }
+
+  togglePlay() {
+    if (!this.wavesurferReady)
+      return;
+    if (this.wavesurfer.isPlaying()) {
+      this.wavesurfer.pause();
+    } else {
+      this.plotService.stopRecording();
+      const measuredValues = this.plotService.getMeasuredValues();
+      var keys = Object.keys(measuredValues);
+      keys = keys.sort();
+      var smallestKey = keys[0];
+      var largestKey = keys[keys.length-1];
+      this.wavesurfer.play(smallestKey, largestKey);
+      this.plotService.playFromRecording();
+    }
   }
 }

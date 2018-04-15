@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { WaveformService  } from './waveform.service';
 
 @Injectable()
@@ -13,9 +14,24 @@ export class PlotService {
   private time: number;
   private measuredValues: { [time: number]: any; };
   private isRecording: boolean;
+  private isFromRecording: boolean;
+  private newMessageSubject: Subject<any>;
 
   constructor(private waveformService: WaveformService) {
+    this.newMessageSubject = new Subject();
+    this.isFromRecording = false;
     this.socket = io('http://localhost:5000');
+    this.socket.on('message', msg => {
+      msg = JSON.parse(msg);
+      msg = this.calculateRelative(msg);
+      msg = this.smooth(msg);
+      msg.time = this.time;
+      if (this.isRecording) {
+        this.measuredValues[this.time] = msg;
+        console.log(this.measuredValues);
+        this.newMessageSubject.next(this.mapToGrid(msg));
+      }
+    });
     this.weight = 0.15;
     this.measuredValues = {};
     this.time = 0;
@@ -35,27 +51,20 @@ export class PlotService {
     };
     this.smoothPrevious = null;
     this.waveformService.getReadyObservable().subscribe((val) => {
-      this.waveformService.onNewTime().subscribe((val) => {
-        this.time = val;
-      });
+      console.log('plot service waveform status', val);
+      if (val) {
+        this.waveformService.onNewTime().subscribe((val) => {
+          this.time = val;
+          if (this.isFromRecording) {
+            this.newMessageSubject.next(this.mapToGrid(this.measuredValues[this.time]));
+          }
+        });
+      }
     });
   }
 
   onNewMessage() {
-    return Observable.create(observer => {
-      this.socket.on('message', msg => {
-        msg = JSON.parse(msg);
-        msg = this.calculateRelative(msg);
-        msg = this.smooth(msg);
-        msg.time = this.time;
-        if (this.isRecording) {
-          this.measuredValues[this.time] = msg;
-        }
-
-        console.log(this.measuredValues);
-        observer.next(this.mapToGrid(msg));
-      });
-    });
+    return this.newMessageSubject;
   }
 
   mapToAxis(value, stats) {
@@ -100,13 +109,22 @@ export class PlotService {
     }
   }
 
+  getMeasuredValues() {
+    return this.getMeasuredValues();
+  }
+
   startRecording() {
     this.measuredValues = [];
     this.isRecording = true;
+    this.isFromRecording = false;
   }
 
   stopRecording() {
     this.isRecording = false;
+  }
+
+  playFromRecording() {
+    this.isFromRecording = true;
   }
 }
 

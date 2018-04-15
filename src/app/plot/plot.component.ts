@@ -7,8 +7,7 @@ import {Config, Data, Layout} from 'plotly.js';
 @Component({
   selector: 'app-plot',
   templateUrl: './plot.component.html',
-  styleUrls: ['./plot.component.css'],
-  providers: [PlotService, WaveformService]
+  styleUrls: ['./plot.component.css']
 })
 export class PlotComponent implements OnInit, AfterViewInit {
   @ViewChild('plot') el: ElementRef;
@@ -86,6 +85,8 @@ export class PlotComponent implements OnInit, AfterViewInit {
 
   stopRecording() {
     this.plotService.stopRecording();
+    if (this.wavesurferReady)
+      this.wavesurfer.pause();
   }
 
   togglePlay() {
@@ -96,8 +97,10 @@ export class PlotComponent implements OnInit, AfterViewInit {
     } else {
       this.plotService.stopRecording();
       const measuredValues = this.plotService.getMeasuredValues();
-      var keys = Object.keys(measuredValues);
-      keys = keys.sort();
+      var keys = Object.keys(measuredValues).map(val => {
+        return +val;
+      });
+      // keys = keys.sort();
       var smallestKey = keys[0];
       var largestKey = keys[keys.length-1];
       this.wavesurfer.play(smallestKey, largestKey);

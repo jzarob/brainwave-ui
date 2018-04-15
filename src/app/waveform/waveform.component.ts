@@ -5,8 +5,7 @@ import { WaveformService } from '../waveform.service';
 @Component({
   selector: 'app-waveform',
   templateUrl: './waveform.component.html',
-  styleUrls: ['./waveform.component.css'],
-  providers: [WaveformService]
+  styleUrls: ['./waveform.component.css']
 })
 export class WaveformComponent implements OnInit, AfterViewInit {
 

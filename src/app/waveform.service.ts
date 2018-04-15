@@ -58,7 +58,7 @@ export class WaveformService {
   onNewTime() {
     return Observable.create(observer => {
       this._wavesurfer.on('audioprocess', (msg) => {
-        observer.next(msg);
+        observer.next(Math.floor(msg*10)/10);
       });
     });
   }

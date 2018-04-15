@@ -22,9 +22,9 @@ export class PlotComponent implements OnInit {
     this.plotService.onNewMessage().subscribe(msg => {
       console.log(msg);
       this.data = msg;
-      this.data.mode = 'markers'
+      this.data.mode = 'markers';
       this.data.type = 'scatter';
-      Plotly.plot(this.element, [this.data], this.layout);
+      Plotly.react(this.element, [this.data], this.layout);
     });
   }
 
@@ -36,7 +36,7 @@ export class PlotComponent implements OnInit {
       y: [0.1, 0.2, 0.3],
       type: 'scatter',
       mode: 'markers'
-    }; 
+    };
 
     this.layout = {
       title: 'Mood Chart',

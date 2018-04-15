@@ -53,11 +53,22 @@ export class PlotService {
     this.waveformService.getReadyObservable().subscribe((val) => {
       console.log('plot service waveform status', val);
       if (val) {
-        this.waveformService.onNewTime().subscribe((val) => {
-          this.time = val;
-          if (this.isFromRecording) {
+        this.waveformService.onNewTime().subscribe((time) => {
+          this.time = time;
+          if (this.isFromRecording && this.measuredValues[this.time]) {
             this.newMessageSubject.next(this.mapToGrid(this.measuredValues[this.time]));
           }
+        });
+
+        this.waveformService.getSeekObservable().subscribe(time => {
+          let keys = Object.keys(this.measuredValues).map(num => {
+            return +num;
+          });
+          keys = keys.sort();
+          this.time = keys.find((element) => {
+            return element >= time;
+          });
+          this.newMessageSubject.next(this.mapToGrid(this.measuredValues[this.time]));
         });
       }
     });
@@ -123,8 +134,9 @@ export class PlotService {
     this.isRecording = false;
   }
 
-  playFromRecording() {
+  playFromRecording(time) {
     this.isFromRecording = true;
+    this.time = time;
   }
 }
 

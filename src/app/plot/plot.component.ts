@@ -77,34 +77,38 @@ export class PlotComponent implements OnInit, AfterViewInit {
   }
 
   startRecording() {
-    if (!this.wavesurferReady)
+    if (!this.wavesurferReady) {
       return;
+    }
     this.wavesurfer.play();
     this.plotService.startRecording();
   }
 
   stopRecording() {
     this.plotService.stopRecording();
-    if (this.wavesurferReady)
+    if (this.wavesurferReady) {
       this.wavesurfer.pause();
+    }
   }
 
   togglePlay() {
-    if (!this.wavesurferReady)
+    if (!this.wavesurferReady) {
       return;
+    }
     if (this.wavesurfer.isPlaying()) {
       this.wavesurfer.pause();
     } else {
       this.plotService.stopRecording();
       const measuredValues = this.plotService.getMeasuredValues();
-      var keys = Object.keys(measuredValues).map(val => {
+      let keys = Object.keys(measuredValues).map(val => {
         return +val;
       });
-      // keys = keys.sort();
-      var smallestKey = keys[0];
-      var largestKey = keys[keys.length-1];
+      keys = keys.sort();
+      const smallestKey = keys[0];
+      const largestKey = keys[keys.length - 1];
+      console.log(keys, smallestKey, largestKey);
       this.wavesurfer.play(smallestKey, largestKey);
-      this.plotService.playFromRecording();
+      this.plotService.playFromRecording(smallestKey);
     }
   }
 }

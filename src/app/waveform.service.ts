@@ -13,8 +13,9 @@ export class WaveformService {
   private play: EventEmitter = new EventEmitter();
   private readyObservable: BehaviorSubject<boolean>;
   private finishedObs: Subject<boolean>;
+  private seekObservable = new Subject();
 
-  constructor() { 
+  constructor() {
     this.readyObservable = new BehaviorSubject(false);
     this.finishedObs = new Subject();
   }
@@ -33,7 +34,7 @@ export class WaveformService {
     });
 
     this._wavesurfer.on('seek', (progress) => {
-      this.timeChanged.emit(progress);
+      this.seekObservable.next(progress * this._wavesurfer.getDuration());
     });
 
     this._wavesurfer.on('play', () => {
@@ -55,6 +56,10 @@ export class WaveformService {
 
   getFinishObservable() {
     return this.finishedObs;
+  }
+
+  getSeekObservable() {
+    return this.seekObservable;
   }
 
   onNewTime() {

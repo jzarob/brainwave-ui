@@ -91,6 +91,14 @@ export class PlotComponent implements OnInit, AfterViewInit {
     }
   }
 
+  startBaseline() {
+      this.plotService.startBaseline();
+  }
+
+  stopBaseline() {
+    this.plotService.stopBaseline();
+  }
+
   togglePlay() {
     if (!this.wavesurferReady) {
       return;

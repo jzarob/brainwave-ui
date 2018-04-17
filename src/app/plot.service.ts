@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { WaveformService  } from './waveform.service';
+import { WaveformService } from './waveform.service';
+import { StatsService } from './stats.service';
 
 @Injectable()
 export class PlotService {
@@ -15,15 +16,20 @@ export class PlotService {
   private measuredValues: { [time: number]: any; };
   private isRecording: boolean;
   private isFromRecording: boolean;
+  private isBaseline: boolean;
+  private baseline: any[];
   private newMessageSubject: Subject<any>;
 
-  constructor(private waveformService: WaveformService) {
+  constructor(private waveformService: WaveformService, private statsService: StatsService) {
     this.newMessageSubject = new Subject();
     this.isFromRecording = false;
     this.socket = io('http://localhost:5000');
     this.socket.on('message', msg => {
       msg = JSON.parse(msg);
       msg = this.calculateRelative(msg);
+      if (this.isBaseline) {
+        this.baseline.push(msg);
+      }
       msg = this.smooth(msg);
       msg.time = this.time;
       if (this.isRecording) {
@@ -34,6 +40,7 @@ export class PlotService {
     });
     this.weight = 0.15;
     this.measuredValues = {};
+    this.baseline = [];
     this.time = 0;
     this.stats = {
       alpha: {
@@ -132,6 +139,18 @@ export class PlotService {
 
   stopRecording() {
     this.isRecording = false;
+  }
+
+  startBaseline() {
+    this.isBaseline = true;
+    this.baseline = [];
+
+  }
+
+  stopBaseline() {
+    this.isBaseline = false;
+    this.stats = this.statsService.computeStats(this.baseline);
+    console.log("new stats obj", this.stats);
   }
 
   playFromRecording(time) {

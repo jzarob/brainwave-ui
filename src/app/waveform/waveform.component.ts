@@ -10,11 +10,22 @@ import { WaveformService } from '../waveform.service';
 export class WaveformComponent implements OnInit, AfterViewInit {
 
   wavesurfer: any;
+  options: any;
+  optionSelected: any;
 
 
   constructor(private waveformService: WaveformService) { }
 
-  ngOnInit() {  }
+  ngOnInit() {  
+      this.options = [
+          {displayName: 'Welcome to the Black Parade', fileName: 'assets/black-parade.wav'},
+          {displayName: 'Bohemian Rhapsody', fileName: 'assets/bohemian-rhapsody.wav'},
+          {displayName: 'The Algorithm', fileName: 'assets/the-algorithm.wav'},
+          {displayName: 'From a Whisper to a Scream', fileName: 'assets/from-a-whisper-to-a-scream.wav'}
+      ];
+
+      this.optionSelected = this.options[0].fileName;
+  }
 
   ngAfterViewInit() {
     requestAnimationFrame(() => {
@@ -28,5 +39,9 @@ export class WaveformComponent implements OnInit, AfterViewInit {
 
     });
   }
+
+    onOptionSelected(event) {
+        this.waveformService.loadSong(event);
+    }
 
 }

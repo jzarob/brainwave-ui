@@ -50,6 +50,11 @@ export class WaveformService {
     });
   }
 
+  loadSong(filepath) {
+      this._wavesurfer.load(filepath);
+      console.log(filepath);
+  }
+
   getReadyObservable() {
     return this.readyObservable;
   }

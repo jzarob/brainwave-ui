@@ -1,1 +1,4 @@
 <div id="wavesurfer"></div>
+<select required [(ngModel)]='optionSelected' (ngModelChange)='onOptionSelected($event)'>
+    <option *ngFor='let option of options' [value]="option.fileName">{{option.displayName}}</option>
+</select>

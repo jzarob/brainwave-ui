@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms'
 import { NgModule } from '@angular/core';
 import { PlotService  } from './plot.service'
 import { WaveformService  } from './waveform.service'
@@ -17,7 +18,8 @@ import { PlotComponent } from './plot/plot.component';
     PlotComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    FormsModule
   ],
   providers: [WaveformService, PlotService, StatsService],
   bootstrap: [AppComponent]

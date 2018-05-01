@@ -132,7 +132,7 @@ export class PlotService {
   }
 
   startRecording() {
-    this.measuredValues = [];
+    this.measuredValues = {};
     this.isRecording = true;
     this.isFromRecording = false;
   }
@@ -156,6 +156,32 @@ export class PlotService {
   playFromRecording(time) {
     this.isFromRecording = true;
     this.time = time;
+  }
+
+  nextSongIndex() {
+    let quadrantSum = (sum, mappedPoint) => {
+      sum.x += +(mappedPoint.x);
+      sum.y += +(mappedPoint.y);
+      return sum;
+    }
+    let values = Object.values(this.measuredValues);
+    console.log('values before transformation', values);
+    let scope = this;
+      let sum = values.map((point) => {
+        return {
+          x: [this.mapToAxis(point.alpha, this.stats.alpha)],
+          y: [this.mapToAxis(point.beta, this.stats.beta)]
+        };
+      })
+        .reduce(quadrantSum, {x: 0, y: 0});
+    console.log('sum', sum);
+
+    // quadrants start in upper right and labeld counter-clockwise
+    if (sum.x > 0) {
+      return sum.y > 0 ? 0 : 3;
+    } else {
+      return sum.y > 0 ? 1 : 2;
+    }
   }
 }
 

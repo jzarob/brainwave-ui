@@ -17,14 +17,11 @@ export class WaveformComponent implements OnInit, AfterViewInit {
   constructor(private waveformService: WaveformService) { }
 
   ngOnInit() {  
-      this.options = [
-          {displayName: 'Welcome to the Black Parade', fileName: 'assets/black-parade.wav'},
-          {displayName: 'Bohemian Rhapsody', fileName: 'assets/bohemian-rhapsody.wav'},
-          {displayName: 'The Algorithm', fileName: 'assets/the-algorithm.wav'},
-          {displayName: 'From a Whisper to a Scream', fileName: 'assets/from-a-whisper-to-a-scream.wav'}
-      ];
-
+      this.options = this.waveformService.getSongOptions();
       this.optionSelected = this.options[0].fileName;
+      this.waveformService.getNewSongObservable().subscribe((i:number) => {
+        this.optionSelected = this.options[i].fileName;
+      });
   }
 
   ngAfterViewInit() {
@@ -43,5 +40,6 @@ export class WaveformComponent implements OnInit, AfterViewInit {
     onOptionSelected(event) {
         this.waveformService.loadSong(event);
     }
+
 
 }

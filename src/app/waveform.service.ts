@@ -14,6 +14,7 @@ export class WaveformService {
   private readyObservable: BehaviorSubject<boolean>;
   private finishedObs: Subject<boolean>;
   private seekObservable = new Subject();
+  private newSongObservable = new Subject();
 
   constructor() {
     this.readyObservable = new BehaviorSubject(false);
@@ -65,6 +66,25 @@ export class WaveformService {
 
   getSeekObservable() {
     return this.seekObservable;
+  }
+
+  getNewSongObservable() {
+    return this.newSongObservable;
+  }
+
+  getSongOptions() {
+      return [
+          {displayName: 'Welcome to the Black Parade', fileName: 'assets/black-parade.wav'},
+          {displayName: 'Bohemian Rhapsody', fileName: 'assets/bohemian-rhapsody.wav'},
+          {displayName: 'The Algorithm', fileName: 'assets/the-algorithm.wav'},
+          {displayName: 'From a Whisper to a Scream', fileName: 'assets/from-a-whisper-to-a-scream.wav'}
+      ];
+
+  }
+
+  loadSongFromIndex(index) {
+    this.loadSong(this.getSongOptions()[index].fileName);
+    this.newSongObservable.next(index);
   }
 
   onNewTime() {

@@ -27,6 +27,7 @@ export class PlotComponent implements OnInit, AfterViewInit {
       this.data = msg;
       this.data.mode = 'markers';
       this.data.type = 'scatter';
+      this.data.marker = {size: 20};
       Plotly.react(this.element, [this.data], this.layout);
     });
   }
@@ -57,7 +58,8 @@ export class PlotComponent implements OnInit, AfterViewInit {
       x: [0.5, 0.7, 0.9],
       y: [0.1, 0.2, 0.3],
       type: 'scatter',
-      mode: 'markers'
+      mode: 'markers',
+      marker: {size: 20}
     };
 
     this.layout = {
@@ -118,5 +120,11 @@ export class PlotComponent implements OnInit, AfterViewInit {
       this.wavesurfer.play(smallestKey, largestKey);
       this.plotService.playFromRecording(smallestKey);
     }
+  }
+  nextSong() {
+    console.log('Playing next song');
+    let index = this.plotService.nextSongIndex();
+    console.log('index', index);
+    this.waveformService.loadSongFromIndex(index);
   }
 }
